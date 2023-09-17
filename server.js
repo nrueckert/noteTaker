@@ -20,8 +20,8 @@ app.get('/notes', (req, res) =>
 );
 app.get('/api/notes', (req, res) => {
     fs.readFile('./db/db.json', 'utf8', async (err, data) => {
-
-
+        const notes = JSON.parse(data)
+        res.status(200).json(notes)
     })
 })
 
