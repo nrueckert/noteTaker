@@ -3,6 +3,7 @@ const app = express()
 const PORT = 3001
 const path = require('path')
 const fs = require('fs')
+const uuid = require('./helpers/uuid')
 
 
 app.use(express.json());
@@ -18,7 +19,8 @@ app.get('/notes', (req, res) =>
     res.sendFile(path.join(__dirname, '/public/notes.html'))
 );
 app.get('/api/notes', (req, res) => {
-    fs.readFile('./db/db.json', 'utf8', (err, data) => {
+    fs.readFile('./db/db.json', 'utf8', async (err, data) => {
+
 
     })
 })
@@ -27,12 +29,13 @@ app.get('/api/notes', (req, res) => {
 app.post('/api/notes', (req, res) => {
     console.info(`${req.method} request received to add a note`);
 
-    const { noteTitle, noteText} = req.body;
+    const { title, text } = req.body;
   
-    if (noteTitle && noteText) {
+    if (title && text) {
       const newNote = {
-        noteText,
-        noteTitle
+        title,
+        text,
+        note_id: uuid()
       };
   
       fs.readFile('./db/db.json', 'utf8', (err, data) => {
@@ -44,9 +47,8 @@ app.post('/api/notes', (req, res) => {
   
           parsedNotes.push(newNote);
   
-          fs.writeFile(
-            './db/db.json',
-            JSON.stringify(parsedNotes, null, 4),
+          fs.writeFile('./db/db.json', 
+          JSON.stringify(parsedNotes, null, 4),
             (writeErr) =>
               writeErr
                 ? console.error(writeErr)
